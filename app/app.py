@@ -1,6 +1,6 @@
 import os
 import psycopg2
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
@@ -61,6 +61,49 @@ def customers():
 
         cursor.execute(
             "SELECT id, name, email FROM customers ORDER BY id;"
+        )
+
+        rows = cursor.fetchall()
+
+        cursor.close()
+        connection.close()
+
+        return jsonify([
+            {
+                "id": row[0],
+                "name": row[1],
+                "email": row[2]
+            }
+            for row in rows
+        ])
+
+    except Exception as error:
+        return jsonify({
+            "error": str(error)
+        }), 500
+
+
+@app.route("/customers/search")
+def search_customers():
+    name = request.args.get("name", "").strip()
+
+    if not name:
+        return jsonify({
+            "error": "name query parameter is required"
+        }), 400
+
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            """
+            SELECT id, name, email
+            FROM customers
+            WHERE name ILIKE %s
+            ORDER BY id;
+            """,
+            (f"%{name}%",)
         )
 
         rows = cursor.fetchall()
