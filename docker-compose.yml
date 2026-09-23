@@ -1,0 +1,127 @@
+services:
+
+  customer-app-dev:
+    image: customer-app:1.0.0
+    container_name: customer-app-dev
+    environment:
+      APP_VERSION: "1.0.0"
+      ENVIRONMENT: "DEV"
+      DB_HOST: customer-db-dev
+      DB_NAME: customerdb
+      DB_USER: customeruser
+      DB_PASSWORD: customerpass
+      DB_PORT: "5432"
+    ports:
+      - "8081:8081"
+    networks:
+      - customer-dev-net
+    depends_on:
+      customer-db-dev:
+        condition: service_healthy
+
+  customer-db-dev:
+    image: postgres:16
+    container_name: customer-db-dev
+    environment:
+      POSTGRES_DB: customerdb
+      POSTGRES_USER: customeruser
+      POSTGRES_PASSWORD: customerpass
+    volumes:
+      - customer-db-dev-data:/var/lib/postgresql/data
+      - ./app/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - customer-dev-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U customeruser -d customerdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  customer-app-uat:
+    image: customer-app:1.0.0
+    container_name: customer-app-uat
+    environment:
+      APP_VERSION: "1.0.0"
+      ENVIRONMENT: "UAT"
+      DB_HOST: customer-db-uat
+      DB_NAME: customerdb
+      DB_USER: customeruser
+      DB_PASSWORD: customerpass
+      DB_PORT: "5432"
+    ports:
+      - "8082:8081"
+    networks:
+      - customer-uat-net
+    depends_on:
+      customer-db-uat:
+        condition: service_healthy
+
+  customer-db-uat:
+    image: postgres:16
+    container_name: customer-db-uat
+    environment:
+      POSTGRES_DB: customerdb
+      POSTGRES_USER: customeruser
+      POSTGRES_PASSWORD: customerpass
+    volumes:
+      - customer-db-uat-data:/var/lib/postgresql/data
+      - ./app/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - customer-uat-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U customeruser -d customerdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  customer-app-prod:
+    image: customer-app:1.0.0
+    container_name: customer-app-prod
+    environment:
+      APP_VERSION: "1.0.0"
+      ENVIRONMENT: "PRODUCTION"
+      DB_HOST: customer-db-prod
+      DB_NAME: customerdb
+      DB_USER: customeruser
+      DB_PASSWORD: customerpass
+      DB_PORT: "5432"
+    ports:
+      - "8083:8081"
+    networks:
+      - customer-prod-net
+    depends_on:
+      customer-db-prod:
+        condition: service_healthy
+
+  customer-db-prod:
+    image: postgres:16
+    container_name: customer-db-prod
+    environment:
+      POSTGRES_DB: customerdb
+      POSTGRES_USER: customeruser
+      POSTGRES_PASSWORD: customerpass
+    volumes:
+      - customer-db-prod-data:/var/lib/postgresql/data
+      - ./app/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - customer-prod-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U customeruser -d customerdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+networks:
+  customer-dev-net:
+    driver: bridge
+
+  customer-uat-net:
+    driver: bridge
+
+  customer-prod-net:
+    driver: bridge
+
+volumes:
+  customer-db-dev-data:
+  customer-db-uat-data:
+  customer-db-prod-data:
