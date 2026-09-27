@@ -59,7 +59,7 @@ pipeline {
                     echo "Deploying to ${params.ENVIRONMENT}"
                     echo "Docker service: ${serviceName}"
 
-                    bat "docker-compose up -d --force-recreate ${serviceName}"
+                    bat "docker-compose up -d --force-recreate --remove-orphans ${serviceName}"
                 }
             }
         }
