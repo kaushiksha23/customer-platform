@@ -2,7 +2,6 @@ services:
 
   customer-app-dev:
     image: customer-app:1.0.0
-    container_name: customer-app-dev
     environment:
       APP_VERSION: "1.0.0"
       ENVIRONMENT: "DEV"
@@ -21,7 +20,6 @@ services:
 
   customer-db-dev:
     image: postgres:16
-    container_name: customer-db-dev
     environment:
       POSTGRES_DB: customerdb
       POSTGRES_USER: customeruser
@@ -39,7 +37,6 @@ services:
 
   customer-app-uat:
     image: customer-app:1.0.0
-    container_name: customer-app-uat
     environment:
       APP_VERSION: "1.0.0"
       ENVIRONMENT: "UAT"
@@ -58,7 +55,6 @@ services:
 
   customer-db-uat:
     image: postgres:16
-    container_name: customer-db-uat
     environment:
       POSTGRES_DB: customerdb
       POSTGRES_USER: customeruser
@@ -76,7 +72,6 @@ services:
 
   customer-app-prod:
     image: customer-app:1.0.0
-    container_name: customer-app-prod
     environment:
       APP_VERSION: "1.0.0"
       ENVIRONMENT: "PRODUCTION"
@@ -95,7 +90,6 @@ services:
 
   customer-db-prod:
     image: postgres:16
-    container_name: customer-db-prod
     environment:
       POSTGRES_DB: customerdb
       POSTGRES_USER: customeruser
