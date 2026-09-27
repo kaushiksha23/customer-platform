@@ -22,15 +22,15 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
-            steps {
-                bat 'docker run --rm -v "%CD%:/workspace" -w /workspace customer-app:1.0.0 pytest tests'
-            }
-        }
-
         stage('Build Image') {
             steps {
                 bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% -f app/Dockerfile .'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                bat 'docker run --rm -v "%CD%:/workspace" -w /workspace %IMAGE_NAME%:%IMAGE_TAG% pytest tests'
             }
         }
 
